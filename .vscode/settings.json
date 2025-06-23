@@ -1,0 +1,25 @@
+{
+  "C_Cpp.intelliSenseEngine": "default",
+  "idf.espIdfPathWin": "C:\\Users\\diasm\\esp\\v5.4\\esp-idf",
+  "idf.pythonInstallPath": "C:\\Users\\diasm\\.espressif\\tools\\idf-python\\3.11.2\\python.exe",
+  "idf.openOcdConfigs": [
+    "board/esp32-wrover-kit-3.3v.cfg"
+  ],
+  "idf.portWin": "COM9",
+  "idf.toolsPathWin": "C:\\Users\\diasm\\.espressif",
+  "idf.flashType": "UART",
+  "idf.customExtraVars": {
+    "IDF_TARGET": "esp32"
+  },
+  "files.associations": {
+    "*.module": "php",
+    "future": "cpp",
+    "system_error": "cpp",
+    "stdio.h": "c",
+    "freertos.h": "c",
+    "mpu6500.h": "c",
+    "esp_err.h": "c",
+    "uart.h": "c",
+    "esp_event.h": "c"
+  }
+}
