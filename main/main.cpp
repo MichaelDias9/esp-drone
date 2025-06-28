@@ -6,6 +6,7 @@
 #include "nvs_flash.h"
 #include "esp_wifi.h"
 #include "esp_event.h"
+#include "esp_mac.h"
 #include "esp_system.h"
 #include "i2c_manager.h"
 #include "web_socket_client.h"
@@ -153,9 +154,9 @@ void app_main(void)
         if (err == ESP_OK) {
             // Format the sensor data into the string - use minimal formatting to reduce overhead
             int len = snprintf(data_buffer, sizeof(data_buffer), 
-                "110 %.2f,%.2f,%.2f,%.2f,%.2f,%.2f",
-                sensor_data.gyro_x, sensor_data.gyro_y, sensor_data.gyro_z,
-                sensor_data.accel_x, sensor_data.accel_y, sensor_data.accel_z);
+                "011 %.2f,%.2f,%.2f,%.2f,%.2f,%.2f",
+                sensor_data.accel_x, sensor_data.accel_y, sensor_data.accel_z,
+                sensor_data.gyro_x, sensor_data.gyro_y, sensor_data.gyro_z);
           
             // Send the data over WebSocket
             ws_client_send(data_buffer);  
