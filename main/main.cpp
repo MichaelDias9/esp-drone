@@ -5,7 +5,7 @@
 #include "esp_system.h"
 
 #include "i2c_manager.h"
-#include "Mpu6500.h"
+#include "MPU6500.h"
 #include "USBComm.h"  
 
 static const char *TAG = "main";
@@ -15,16 +15,21 @@ extern "C" void app_main() {
     usb_comm_init(); 
 
     // Initialize I2C manager
-    esp_err_t err = i2c_manager_init();
-    if (err != ESP_OK) {
-        ESP_LOGE(TAG, "I2C manager initialization failed");
-        return;
-    }
+    ESP_ERROR_CHECK(i2c_manager_init());
     
-    // Initialize MPU6500
-    MPU6500 mpu;
-    if (mpu.init() != ESP_OK) {
-        ESP_LOGE(TAG, "MPU6500 initialization failed");
+    // Scan for I2C devices
+    ESP_ERROR_CHECK(i2c_manager_scan());
+    
+    // Get the I2C bus handle
+    i2c_master_bus_handle_t bus_handle = i2c_manager_get_bus_handle();
+    
+    // Create MPU6500 instance
+    MPU6500 mpu(0x68);  // or just MPU6500 mpu; for default address
+    
+    // Initialize the MPU6500
+    esp_err_t err = mpu.init(bus_handle);
+    if (err != ESP_OK) {
+        ESP_LOGE(TAG, "Failed to initialize MPU6500: %s", esp_err_to_name(err));
         return;
     }
 

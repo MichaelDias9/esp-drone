@@ -1,3 +1,0 @@
-[submodule "components/esp-protocols"]
-	path = components/esp-protocols
-	url = https://github.com/espressif/esp-protocols.git
