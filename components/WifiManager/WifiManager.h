@@ -30,6 +30,12 @@ public:
     
     // Disconnect from WiFi
     esp_err_t disconnect();
+
+    // Connect using stored credentials
+    esp_err_t reconnect(int max_retries = 5);
+    
+    // Store credentials
+    void setCredentials(const std::string& ssid, const std::string& password);
     
     // Get current status
     Status getStatus() const { return status_; }
@@ -49,6 +55,9 @@ private:
     
     void handleWiFiEvent(esp_event_base_t event_base, int32_t event_id, void* event_data);
     
+    std::string stored_ssid_;
+    std::string stored_password_;
+
     EventGroupHandle_t event_group_;
     Status status_;
     std::string ip_address_;

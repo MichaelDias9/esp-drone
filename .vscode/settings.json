@@ -1,7 +1,7 @@
 {
   "C_Cpp.intelliSenseEngine": "default",
   "idf.espIdfPathWin": "C:\\Users\\diasm\\esp\\v5.4\\esp-idf",
-  "idf.pythonInstallPath": "/opt/homebrew/bin/python3",
+  "idf.pythonInstallPath": "C:\\Users\\diasm\\.espressif\\tools\\idf-python\\3.11.2\\python.exe",
   "idf.openOcdConfigs": [
     "board/esp32-wrover-kit-3.3v.cfg"
   ],
@@ -22,6 +22,9 @@
     "uart.h": "c",
     "esp_event.h": "c",
     "stdint.h": "c",
-    "numbers": "c"
-  }
+    "numbers": "c",
+    "i2c.h": "c",
+    "i2c_manager.h": "c"
+  },
+  "idf.monitorPort": "COM9"
 }

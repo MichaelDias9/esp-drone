@@ -4,6 +4,14 @@
 #include "esp_err.h"
 #include <stdint.h>
 
+#define PWR_MGMT_1            0x6B
+#define ACCEL_CONFIG          0x1C
+#define GYRO_CONFIG           0x1B
+#define SMPLRT_DIV            0x19
+#define CONFIG                0x1A
+#define INT_PIN_CFG           0x37
+#define ACCEL_CONFIG2         0x1D
+
 //Struct to hold accelerometer and gyroscope data.
  struct mpu6500_data_t {
     float accel_x;

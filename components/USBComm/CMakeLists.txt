@@ -1,4 +1,5 @@
 idf_component_register(
-  SRCS "sensor_calibration.c"
+  SRCS "USBComm.cpp"
   INCLUDE_DIRS "."
+  REQUIRES driver
 )

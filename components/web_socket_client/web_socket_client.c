@@ -43,7 +43,10 @@ void ws_client_start(void)
 void ws_client_send(const char *data)
 {
     if (client && esp_websocket_client_is_connected(client)) {
-        esp_websocket_client_send_text(client, data, strlen(data), portMAX_DELAY);
+        int ret = esp_websocket_client_send_text(client, data, strlen(data), pdMS_TO_TICKS(10));
+        if (ret < 0) {
+            ESP_LOGW(TAG, "WebSocket send failed: %d", ret);
+        }
     }
 }
 

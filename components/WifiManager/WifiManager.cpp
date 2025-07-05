@@ -132,6 +132,19 @@ esp_err_t WiFiManager::disconnect() {
     return ESP_OK;
 }
 
+void WiFiManager::setCredentials(const std::string& ssid, const std::string& password) {
+    stored_ssid_ = ssid;
+    stored_password_ = password;
+}
+
+esp_err_t WiFiManager::reconnect(int max_retries) {
+    if (stored_ssid_.empty() || stored_password_.empty()) {
+        ESP_LOGE(TAG, "No stored credentials for reconnect");
+        return ESP_ERR_INVALID_STATE;
+    }
+    return connect(stored_ssid_, stored_password_, max_retries);
+}
+
 void WiFiManager::event_handler(void* arg, esp_event_base_t event_base,
                                int32_t event_id, void* event_data) {
     WiFiManager* manager = static_cast<WiFiManager*>(arg);

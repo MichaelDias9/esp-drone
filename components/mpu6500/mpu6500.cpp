@@ -4,7 +4,6 @@
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
 #include "i2c_manager.h"
-#include "sensor_calibration.h"
 
 static const char *TAG = "MPU6500";
 
@@ -50,22 +49,30 @@ esp_err_t MPU6500::read_whoami(uint8_t *who_am_i) {
 
 // Initialization
 esp_err_t MPU6500::init() {
+    /* Check whoami value (optional)
     uint8_t whoami;
     ESP_ERROR_CHECK(read_whoami(&whoami));
-    
+    ESP_LOGI(TAG, "WHO_AM_I: 0x%02X", whoami);
     if (whoami != 0x70) {
         ESP_LOGE(TAG, "Invalid WHO_AM_I: 0x%02X", whoami);
         return ESP_FAIL;
-    }
+    }*/
 
-    // Wake up device
-    ESP_ERROR_CHECK(write_register(0x6B, 0x00));
-    vTaskDelay(pdMS_TO_TICKS(100));
+    // 1. Wake up device (disable sleep, use best clock)
+    ESP_ERROR_CHECK(write_register(PWR_MGMT_1, 0x01));      // Clock: PLL with X-axis gyro reference
     
-    // Configuration
-    ESP_ERROR_CHECK(write_register(0x1A, 0x00));  // CONFIG
-    ESP_ERROR_CHECK(write_register(0x1B, 0x18));  // GYRO_CONFIG (+/- 2000dps)
-    ESP_ERROR_CHECK(write_register(0x1C, 0x08));  // ACCEL_CONFIG (+/- 4g)
+    // 2. Configure Digital Low-Pass Filter (DLPF)
+    ESP_ERROR_CHECK(write_register(CONFIG, 0x00));          // DLPF_CFG = 0 (Gyro: 250Hz BW)
+
+    // 3. Configure sensors:
+    ESP_ERROR_CHECK(write_register(GYRO_CONFIG, 0x00));     // Gyro: ±250°/s range
+    ESP_ERROR_CHECK(write_register(ACCEL_CONFIG, 0x00));    // Accel: ±2g range
+    
+    // 4. Enable Accel DLPF (disable A_DLPF_CFG bypass)
+    ESP_ERROR_CHECK(write_register(ACCEL_CONFIG2, 0x01));   // Accel Fchoice_b = 0 (enable DLPF) 184Hz
+
+    // 5. Sample Rate = 1kHz / (1 + SMPLRT_DIV)
+    ESP_ERROR_CHECK(write_register(SMPLRT_DIV, 0x04));      // Sample rate = 200Hz (1kHz/(1+4))
     
     return ESP_OK;
 }
@@ -87,8 +94,8 @@ esp_err_t MPU6500::read_data(float* accel_x, float* accel_y, float* accel_z,
     int16_t gz = (data[12] << 8) | data[13];
     
     // Convert to physical values
-    const float accel_scale = 4.0f / 32768.0f;  // ±4g range
-    const float gyro_scale = 2000.0f / 32768.0f * (3.1415926535f / 180.0f);  // ±2000dps to rad/s
+    const float accel_scale = 2.0f / 32768.0f;  // ±2g range
+    const float gyro_scale = 250.0f / 32768.0f * (3.1415926535f / 180.0f);  // ±250dps to rad/s
     
     *accel_x = ax * accel_scale;
     *accel_y = ay * accel_scale;
