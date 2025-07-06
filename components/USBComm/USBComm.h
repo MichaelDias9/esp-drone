@@ -9,6 +9,7 @@ extern "C" {
 
 void usb_comm_init();
 void usb_send_data(const char* data, size_t length);
+void usb_send_binary_floats(const float* data, size_t count);
 
 #ifdef __cplusplus
 }
