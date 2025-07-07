@@ -6,20 +6,10 @@
 
 #include "i2c_manager.h"
 #include "MPU6500.h"
-#include "USBComm.h"
 
 static const char *TAG = "main";
 
-// Binary protocol structure
-typedef struct {
-    uint8_t flags;     // Bit 0: mag, Bit 1: accel, Bit 2: gyro
-    uint8_t count;     // Number of floats following
-    float data[6];     // Up to 6 floats (2 sensors * 3 axes)
-} __attribute__((packed)) sensor_packet_t;
-
-extern "C" void app_main() {
-    usb_comm_init();
-    
+extern "C" void app_main() {    
     ESP_ERROR_CHECK(i2c_manager_init());
     ESP_ERROR_CHECK(i2c_manager_scan());
     
@@ -39,20 +29,7 @@ extern "C" void app_main() {
     while (1) {
         float ax, ay, az, gx, gy, gz;
         if (mpu.read_data(&ax, &ay, &az, &gx, &gy, &gz) == ESP_OK) {
-            sensor_packet_t packet;
-            packet.flags = 0x06;  // Binary: 110 (bit 2=gyro, bit 1=accel, bit 0=mag)
-            packet.count = 6;     // 6 floats
-            
-            packet.data[0] = ax;   // accel X
-            packet.data[1] = ay;   // accel Y
-            packet.data[2] = -az;  // accel Z
-            packet.data[3] = gx;   // gyro X
-            packet.data[4] = gy;   // gyro Y
-            packet.data[5] = gz;   // gyro Z
-            
-            // Send binary packet using USBComm interface
-            size_t packet_size = sizeof(uint8_t) * 2 + sizeof(float) * packet.count;
-            usb_send_data((const char*)&packet, packet_size);
+            ESP_LOGI(TAG, "Received MPU6500 data: ax=%f ay=%f az=%f gx=%f gy=%f gz=%f", ax, ay, az, gx, gy, gz);
         } else {
             ESP_LOGW(TAG, "Failed to read MPU6500 data");
         }
