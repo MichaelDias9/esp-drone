@@ -54,29 +54,12 @@ esp_err_t i2c_manager_scan(void)
     ESP_LOGI(TAG, "Scanning I2C bus...");
     
     for (int address = 1; address < 127; address++) {
-        // Create a temporary device handle for probing
-        i2c_device_config_t dev_cfg = {
-            .dev_addr_length = I2C_ADDR_BIT_LEN_7,
-            .device_address = address,
-            .scl_speed_hz = I2C_MASTER_FREQ_HZ,
-        };
-        
-        i2c_master_dev_handle_t dev_handle;
-        esp_err_t err = i2c_master_bus_add_device(i2c_bus_handle, &dev_cfg, &dev_handle);
-        if (err != ESP_OK) {
-            continue;
-        }
-        
-        // Try to probe the device by sending a zero-length write
-        uint8_t dummy_data = 0;
-        err = i2c_master_transmit(dev_handle, &dummy_data, 0, pdMS_TO_TICKS(I2C_TIMEOUT_MS));
+        // Use the bus handle directly with i2c_master_probe
+        esp_err_t err = i2c_master_probe(i2c_bus_handle, address, I2C_TIMEOUT_MS);
         
         if (err == ESP_OK) {
             ESP_LOGI(TAG, "Found device at address: 0x%02X", address);
         }
-        
-        // Clean up the device handle
-        i2c_master_bus_rm_device(dev_handle);
     }
     
     ESP_LOGI(TAG, "I2C scan completed");

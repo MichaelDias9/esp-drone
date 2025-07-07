@@ -4,6 +4,7 @@ dependencies:
   idf:
     version: '>=4.1.0'
 
-  ## Required esp_websocket_client dependency
+  ## Required esp_websocket_client
   esp_websocket_client:
     version: '>=1.0.0'
+
