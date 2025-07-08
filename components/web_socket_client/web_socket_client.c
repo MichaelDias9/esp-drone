@@ -30,9 +30,9 @@ static void websocket_event_handler(void *args, esp_event_base_t base, int32_t e
 void ws_client_start(void)
 {
     esp_websocket_client_config_t ws_cfg = {
-        .uri = "ws://192.168.4.58:8000",
+        .uri = "ws://172.20.10.9:8000",
         .disable_auto_reconnect = false,
-        .reconnect_timeout_ms = 5000,
+        .reconnect_timeout_ms = 100,
     };
 
     client = esp_websocket_client_init(&ws_cfg);
@@ -47,6 +47,20 @@ void ws_client_send(const char *data)
         if (ret < 0) {
             ESP_LOGW(TAG, "WebSocket send failed: %d", ret);
         }
+    }
+}
+
+void ws_client_send_binary(const uint8_t *data, size_t length)
+{
+    if (client && esp_websocket_client_is_connected(client)) {
+        int ret = esp_websocket_client_send_bin(client, (const char*)data, length, pdMS_TO_TICKS(10));
+        if (ret < 0) {
+            ESP_LOGW(TAG, "WebSocket binary send failed: %d", ret);
+        } else {
+            ESP_LOGD(TAG, "Sent %d bytes of binary data", length);
+        }
+    } else {
+        //ESP_LOGW(TAG, "WebSocket not connected, cannot send binary data");
     }
 }
 

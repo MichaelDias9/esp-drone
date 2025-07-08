@@ -3,8 +3,8 @@
 #include "esp_err.h"
 
 // WiFi Configuration 
-#define WIFI_SSID "AB8C2B-2.4"
-#define WIFI_PASSWORD "CP222026624P"
+#define WIFI_SSID "diasm"
+#define WIFI_PASSWORD "mika120301"
 #define WIFI_MAX_RETRIES 5
 
 // WiFi event bits
